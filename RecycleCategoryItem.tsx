@@ -14,7 +14,7 @@ const NORMAL_TEXT_SIZE = 18;
 
 const RecycleCategoryItem = ({ name, index, snapIndex }: Props) => {
   const isSelected = eq(index, snapIndex);
-  const fontWeight = cond(isSelected, "900", "100");
+  const fontWeight = cond(isSelected, "bold", "normal");
   const showedColor = cond(isSelected, color(255, 0, 0, 1), color(0, 0, 0, 1));
 
   /* If you use the below commented snippet, you gonna see that */
