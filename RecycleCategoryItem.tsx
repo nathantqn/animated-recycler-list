@@ -1,19 +1,26 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { upperCase } from "lodash";
-import Animated, { cond, eq } from "react-native-reanimated";
+import Animated, { cond, eq, color } from "react-native-reanimated";
 import { ANIM_TEXT_HEIGHT } from "./constants";
 
 interface Props {
   name: string;
+  index: number;
+  snapIndex: Animated.Node<number>;
 }
 
 const NORMAL_TEXT_SIZE = 18;
 
-const RecycleCategoryItem = ({ name }: Props) => {
+const RecycleCategoryItem = ({ name, index, snapIndex }: Props) => {
+  const isSelected = eq(index, snapIndex);
+  const fontWeight = cond(isSelected, "900", "100");
+  const showedColor = cond(isSelected, color(255, 0, 0, 1), color(0, 0, 0, 1));
   return (
     <View style={styles.textContainer}>
-      <Animated.Text style={[styles.categoryName]}>
+      <Animated.Text
+        style={[styles.categoryName, { fontWeight, color: showedColor }]}
+      >
         {upperCase(name)}
       </Animated.Text>
     </View>

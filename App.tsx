@@ -1,6 +1,16 @@
 import { FontAwesome } from "@expo/vector-icons";
 import React from "react";
 import { View, Dimensions, StyleSheet } from "react-native";
+import Animated, {
+  round,
+  divide,
+  block,
+  call,
+  cond,
+  neq,
+  set,
+  useCode,
+} from "react-native-reanimated";
 import {
   RecyclerListView,
   DataProvider,
@@ -9,6 +19,7 @@ import {
 import { ANIM_TEXT_HEIGHT } from "./constants";
 import RecycleCategoryItem from "./RecycleCategoryItem";
 let { width } = Dimensions.get("window");
+import { onScrollEvent, useValues } from "react-native-redash";
 
 const MULTIPLY_CONSTANT = 14;
 const CONTAINER_HEIGHT = ANIM_TEXT_HEIGHT * MULTIPLY_CONSTANT;
@@ -24,6 +35,12 @@ const DEFAULT_NUM_ITEMS = 51;
 const dataProvider = new DataProvider((r1, r2) => {
   return r1.idCompare !== r2.idCompare;
 });
+
+const AnimatedRecyclerList = Animated.createAnimatedComponent(RecyclerListView);
+
+const getSnapIndex = (translateY: Animated.Adaptable<number>) => {
+  return round(divide(translateY, ANIM_TEXT_HEIGHT));
+};
 
 const generateArray = (n) => {
   let arr = new Array(n);
@@ -48,8 +65,15 @@ const layoutProvider = new LayoutProvider(
 );
 
 export default function TestPerformanceList() {
-  const rowRenderer = (_, category) => {
-    return <RecycleCategoryItem name={category} />;
+  const [translateY, snapIndex] = useValues(0, 0);
+  const rowRenderer = (_, dataName, index) => {
+    return (
+      <RecycleCategoryItem
+        name={dataName}
+        snapIndex={snapIndex}
+        index={index}
+      />
+    );
   };
 
   const data = generateArray(DUPLICATED_TIMES * DEFAULT_NUM_ITEMS);
@@ -57,6 +81,18 @@ export default function TestPerformanceList() {
   const datasProvide = dataProvider.cloneWithRows(data);
   const initialOffset = (data.length / 2) * ANIM_TEXT_HEIGHT;
   const categoriesAvailable = data.length > 0;
+
+  const onScrollHandler = onScrollEvent({ y: translateY });
+
+  useCode(
+    () =>
+      block([
+        cond(neq(snapIndex, getSnapIndex(translateY)), [
+          set(snapIndex, getSnapIndex(translateY)),
+        ]),
+      ]),
+    [translateY]
+  );
 
   return (
     <View style={styles.bg}>
@@ -69,13 +105,14 @@ export default function TestPerformanceList() {
         />
         <View style={styles.container}>
           {categoriesAvailable && (
-            <RecyclerListView
+            <AnimatedRecyclerList
               layoutProvider={layoutProvider}
               dataProvider={datasProvide}
               rowRenderer={rowRenderer}
               renderAheadOffset={RENDER_AHEAD}
               initialOffset={initialOffset}
               scrollViewProps={SCROLL_VIEW_PROPS}
+              onScroll={onScrollHandler}
             />
           )}
         </View>
