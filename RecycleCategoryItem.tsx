@@ -16,11 +16,24 @@ const RecycleCategoryItem = ({ name, index, snapIndex }: Props) => {
   const isSelected = eq(index, snapIndex);
   const fontWeight = cond(isSelected, "900", "100");
   const showedColor = cond(isSelected, color(255, 0, 0, 1), color(0, 0, 0, 1));
+
+  /* If you use the below commented snippet, you gonna see that */
+  /* the more the list is exposed, the more laggy it is */
+  /* and the selected state is NOT updated smoothly and pretty delayed */
+
+  // return (
+  //   <View style={styles.textContainer}>
+  //     <Animated.Text
+  //       style={[styles.categoryName, { fontWeight, color: showedColor }]}
+  //     >
+  //       {upperCase(name)}
+  //     </Animated.Text>
+  //   </View>
+  // );
+
   return (
     <View style={styles.textContainer}>
-      <Animated.Text
-        style={[styles.categoryName, { fontWeight, color: showedColor }]}
-      >
+      <Animated.Text style={[styles.categoryName]}>
         {upperCase(name)}
       </Animated.Text>
     </View>
