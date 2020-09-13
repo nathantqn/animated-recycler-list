@@ -10,6 +10,9 @@ import Animated, {
   neq,
   set,
   useCode,
+  proc,
+  color,
+  eq,
 } from "react-native-reanimated";
 import {
   RecyclerListView,
@@ -35,6 +38,11 @@ const DEFAULT_NUM_ITEMS = 51;
 const dataProvider = new DataProvider((r1, r2) => {
   return r1.idCompare !== r2.idCompare;
 });
+
+const getColorForItem = proc(
+  (index: number, snapIndex: Animated.Node<number>) =>
+    cond(eq(index, snapIndex), color(255, 0, 0, 1), color(0, 0, 0, 1))
+);
 
 const AnimatedRecyclerList = Animated.createAnimatedComponent(RecyclerListView);
 
@@ -66,14 +74,10 @@ const layoutProvider = new LayoutProvider(
 
 export default function TestPerformanceList() {
   const [translateY, snapIndex] = useValues(0, 0);
+
   const rowRenderer = (_, dataName, index) => {
-    return (
-      <RecycleCategoryItem
-        name={dataName}
-        snapIndex={snapIndex}
-        index={index}
-      />
-    );
+    const showedColor = getColorForItem(index, snapIndex);
+    return <RecycleCategoryItem name={dataName} color={showedColor} />;
   };
 
   const data = generateArray(DUPLICATED_TIMES * DEFAULT_NUM_ITEMS);
