@@ -7,21 +7,22 @@ import { ANIM_TEXT_HEIGHT } from "./constants";
 interface Props {
   name: string;
   color: Animated.Node<number>;
+  opacity: Animated.Node<number>;
 }
 
 const NORMAL_TEXT_SIZE = 18;
 
-const RecycleCategoryItem = ({ name, color }: Props) => {
+const RecycleCategoryItem = ({ name, color, opacity }: Props) => {
   /* If you use the below commented snippet, you gonna see that */
   /* the more the list is exposed, the more laggy it is */
   /* and the selected state is NOT updated smoothly and pretty delayed */
 
   return (
-    <View style={styles.textContainer}>
-      <Animated.Text style={[styles.categoryName, { color }]}>
+    <Animated.View style={[styles.textContainer]}>
+      <Animated.Text style={[styles.categoryName, { opacity }]}>
         {upperCase(name)}
       </Animated.Text>
-    </View>
+    </Animated.View>
   );
 
   // return (

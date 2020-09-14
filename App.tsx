@@ -44,6 +44,11 @@ const getColorForItem = proc(
     cond(eq(index, snapIndex), color(255, 0, 0, 1), color(0, 0, 0, 1))
 );
 
+const getOpacityForItem = proc(
+  (index: number, snapIndex: Animated.Node<number>) =>
+    cond(eq(index, snapIndex), 1, 0.1)
+);
+
 const AnimatedRecyclerList = Animated.createAnimatedComponent(RecyclerListView);
 
 const getSnapIndex = (translateY: Animated.Adaptable<number>) => {
@@ -77,7 +82,14 @@ export default function TestPerformanceList() {
 
   const rowRenderer = (_, dataName, index) => {
     const showedColor = getColorForItem(index, snapIndex);
-    return <RecycleCategoryItem name={dataName} color={showedColor} />;
+    const opacity = getOpacityForItem(index, snapIndex);
+    return (
+      <RecycleCategoryItem
+        name={dataName}
+        color={showedColor}
+        opacity={opacity}
+      />
+    );
   };
 
   const data = generateArray(DUPLICATED_TIMES * DEFAULT_NUM_ITEMS);
@@ -117,6 +129,7 @@ export default function TestPerformanceList() {
               initialOffset={initialOffset}
               scrollViewProps={SCROLL_VIEW_PROPS}
               onScroll={onScrollHandler}
+              scrollThrottle={1}
             />
           )}
         </View>
