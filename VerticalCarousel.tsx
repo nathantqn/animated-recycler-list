@@ -6,14 +6,17 @@ const DATA = [
   {
     id: 1,
     backgroundColor: "red",
+    name: "Item 1",
   },
   {
     id: 2,
     backgroundColor: "green",
+    name: "Item 2",
   },
   {
     id: 3,
     backgroundColor: "blue",
+    name: "Item 3 gonna be hidden by the Status Bar if swipe up",
   },
 ];
 
@@ -29,7 +32,7 @@ export default function VerticalCarousel() {
   const renderItem = ({ item }) => {
     return (
       <View style={[styles.item, { backgroundColor: item.backgroundColor }]}>
-        <Text style={styles.text}>Hello</Text>
+        <Text style={styles.text}>{item.name}</Text>
       </View>
     );
   };
